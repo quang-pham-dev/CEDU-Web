@@ -1,0 +1,5 @@
+internals/
+amplify/
+app/models/
+app/graphql/
+node_modules/

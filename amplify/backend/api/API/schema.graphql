@@ -1,0 +1,196 @@
+type UserContainer
+  @model
+  # @key(fields: ["user_mode","username"], name:"FindUserIndex", queryField: "searchUsers")
+  # @searchable
+{
+  id: ID!
+  user_mode: Mode
+  fullname: String!
+  avatar: String
+  online_status: OnlineStatus
+  # location: Location
+  likes: [String]
+  pages_created: [Page] @connection(name: "User-CreatedPage")
+  pages_joined: [PageMember] @connection(name: "User-JoinedPage")
+  documents_created: [Document] @connection(name: "User-CreatedDocument")
+  documents_joined: [MemberInDocument] @connection(name: "User-JoinedDocument")
+}
+
+type Page
+  @model
+  @key(fields: ["page_type","page_mode"], name: "ModeIndex", queryField: "listPublicPages")
+  # @key(fields: ["_ref_user_created"], name: "PagesByUserIndex", queryField: "listPagesByUser")
+  # @searchable
+{
+  id: ID!
+  page_id: String!
+  page_name: String!
+  page_mode: Mode!
+  page_type: PageTypeCategory!
+  current_members_count: Int
+  limit_members_count: Int
+  schedule: Schedule
+  members: [PageMember] @connection(name: "Page-Member")
+  posts: [Post] @connection(name: "Page-Post")
+  # groups: [GroupInRoom]
+  # tests: [TestInRoom]
+  # documents: [DocumentInRoom]
+  _ref_user_created: UserContainer! @connection(name: "User-CreatedPage")
+}
+
+type PageMember
+ @model
+ @key(fields: ["pageId_userId"])
+{
+  pageId_userId: ID!
+  score_count: Int
+  is_confirmed: Boolean
+  _ref_page: Page! @connection(name: "Page-Member")
+  _ref_user: UserContainer! @connection(name: "User-JoinedPage")
+}
+
+type Post
+  @model
+{
+  id: ID!
+  content: String!
+  files: [String]
+  likes: [Like] @connection(name: "Post-Like")
+  comments: [Comment] @connection(name: "Post-Comment")
+  _ref_page: Page! @connection(name: "Page-Post")
+  _ref_user_created: UserContainer! @connection
+  # _comment: Comment! @connection(name: "Post-Comment")
+}
+
+type Comment
+  @model
+{
+  id: ID!
+  content: String!
+  datetime_created: String!
+  _ref_post: Post! @connection(name: "Post-Comment")
+  _ref_user: UserContainer! @connection
+}
+
+type Like
+  @model
+  @key(fields: ["postId_userId"])
+{
+  postId_userId: ID!
+  post: Post! @connection(name: "Post-Like")
+  _ref_user: UserContainer! @connection
+}
+
+type Document
+  @model
+{
+  id: ID!
+  doc_title: String!
+  deadline: String
+  doc_type: DocumentType!
+  doc_questions: [DocumentContent]
+  _ref_user_created: UserContainer! @connection(name: "User-CreatedDocument")
+  _ref_members_joined: [MemberInDocument] @connection(name: "Document-MemberInDocument")
+}
+
+type DocumentContent
+{
+  question_id: String!
+  question: String!
+  answers: [DocumentAnswer]
+  option: DocumentOption
+}
+
+type MemberInDocument
+  @model
+{
+  id: ID!
+  answers: [DocumentAnswerOfMember]
+  _ref_doc: Document! @connection(name: "Document-MemberInDocument")
+  _ref_user: UserContainer! @connection(name: "User-JoinedDocument")
+}
+
+type DocumentAnswer
+{
+  order_id: String!
+  key: String!
+  value: String
+  img: String
+}
+
+type DocumentAnswerOfMember
+{
+  question_id: String!
+  answer_ids: [String!]
+}
+
+type DocumentOption
+{
+  video: String
+  audio: String
+  imgs: [String]
+  score: Float
+  seconds: Float
+}
+
+type Schedule
+{
+  datetime_created: String
+  datetime_expired: String
+  datetime_start: String
+  datetime_finish: String
+  day_of_week: String
+  day_of_year: String
+  month_of_year: String
+}
+
+type ThemeSetting
+{
+  background_color: String
+  theme_color: String
+  room_template_theme: Int
+  test_template_theme: Int
+  document_template_theme: Int
+}
+
+type Location {
+  lat: Float!
+  lng: Float!
+}
+
+enum Mode {
+  PUBLIC
+  PRIVATE
+}
+
+enum PageTypeCategory {
+  SCHOOL
+  ROOM
+  GROUP
+  TEAM
+}
+
+enum OnlineStatus {
+  ONLINE
+  OFFLINE
+  SLEEP
+}
+
+enum DocumentType {
+  QUIZZ
+  LETTERS
+}
+
+input LocationInput {
+  lat: Float!
+  lng: Float!
+}
+
+type Query {
+  usersNearByMe(location: LocationInput!, km: Float!): UserContainer
+  getUserContainerX(id: ID!, ss: String!): UserContainer
+}
+
+type UserContainerReponse {
+  items: [UserContainer]
+}

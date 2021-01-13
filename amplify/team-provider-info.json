@@ -1,0 +1,20 @@
+{
+    "dev": {
+        "awscloudformation": {
+            "AuthRoleName": "amplify-cedu-dev-122845-authRole",
+            "UnauthRoleArn": "arn:aws:iam::330477736997:role/amplify-cedu-dev-122845-unauthRole",
+            "AuthRoleArn": "arn:aws:iam::330477736997:role/amplify-cedu-dev-122845-authRole",
+            "Region": "ap-southeast-1",
+            "DeploymentBucketName": "amplify-cedu-dev-122845-deployment",
+            "UnauthRoleName": "amplify-cedu-dev-122845-unauthRole",
+            "StackName": "amplify-cedu-dev-122845",
+            "StackId": "arn:aws:cloudformation:ap-southeast-1:330477736997:stack/amplify-cedu-dev-122845/04d8a120-6290-11ea-8568-0a0613236510",
+            "AmplifyAppId": "dszs8qbx9xdfl"
+        },
+        "categories": {
+            "auth": {
+                "cedu564ab76f": {}
+            }
+        }
+    }
+}
